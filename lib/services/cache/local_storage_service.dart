@@ -43,4 +43,36 @@ class LocalStorageService {
   static Future<void> clear() async {
     await _box.clear();
   }
+
+  // دوال إضافية للمشروع
+  static Future<void> setDarkMode(bool isDark) async {
+    await setBool('is_dark_mode', isDark);
+  }
+
+  static bool isDarkMode() {
+    return getBool('is_dark_mode', defaultValue: false);
+  }
+
+  static Future<void> setLoggedIn(bool value) async {
+    await setBool('is_logged_in', value);
+  }
+
+  static bool isLoggedIn() {
+    return getBool('is_logged_in', defaultValue: false);
+  }
+
+  static Future<void> setUserData(Map<String, dynamic> userData) async {
+    await setString('user_data', userData.toString());
+  }
+
+  static Map<String, dynamic>? getUserData() {
+    final data = getString('user_data');
+    if (data == null) return null;
+    return {}; // سيتم تحسينه لاحقاً
+  }
+
+  static Future<void> clearUserData() async {
+    await remove('user_data');
+    await setBool('is_logged_in', false);
+  }
 }
