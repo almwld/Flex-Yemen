@@ -10,6 +10,8 @@ import 'wallet/wallet_screen.dart';
 import 'chat_screen.dart';
 import 'profile_screen.dart';
 import 'add_ad_screen.dart';
+import 'notifications_screen.dart';
+import 'cart_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -116,6 +118,46 @@ class _MainNavigationState extends State<MainNavigation>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            const Text(
+              'FLEX',
+              style: TextStyle(
+                color: AppTheme.goldColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+                fontFamily: 'Changa',
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              'YEMEN',
+              style: TextStyle(
+                color: AppTheme.goldLight,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Changa',
+              ),
+            ),
+          ],
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart_outlined, color: AppTheme.goldColor),
+            onPressed: () => Navigator.pushNamed(context, '/cart'),
+            tooltip: 'السلة',
+          ),
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined, color: AppTheme.goldColor),
+            onPressed: () => Navigator.pushNamed(context, '/notifications'),
+            tooltip: 'الإشعارات',
+          ),
+        ],
+      ),
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface, boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, -5))]),
