@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
+import '../providers/theme_manager.dart';
+import '../widgets/custom_app_bar.dart';
 import 'home_screen.dart';
 import 'all_ads_screen.dart';
 import 'map/interactive_map_screen.dart';
@@ -114,6 +117,11 @@ class _MainNavigationState extends State<MainNavigation>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      appBar: const CustomAppBar(
+        showLogo: true,
+        showSettings: true,
+        showThemeToggle: true,
+      ),
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface, boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, -5))]),
