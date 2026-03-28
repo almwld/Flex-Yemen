@@ -121,41 +121,17 @@ class _MainNavigationState extends State<MainNavigation>
       appBar: AppBar(
         title: Row(
           children: [
-            const Text(
-              'FLEX',
-              style: TextStyle(
-                color: AppTheme.goldColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                fontFamily: 'Changa',
-              ),
-            ),
+            const Text('FLEX', style: TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.bold, fontSize: 22, fontFamily: 'Changa')),
             const SizedBox(width: 4),
-            Text(
-              'YEMEN',
-              style: TextStyle(
-                color: AppTheme.goldLight,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Changa',
-              ),
-            ),
+            Text('YEMEN', style: TextStyle(color: AppTheme.goldLight, fontSize: 14, fontWeight: FontWeight.w600, fontFamily: 'Changa')),
           ],
         ),
         centerTitle: true,
         elevation: 0,
         backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart_outlined, color: AppTheme.goldColor),
-            onPressed: () => Navigator.pushNamed(context, '/cart'),
-            tooltip: 'السلة',
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: AppTheme.goldColor),
-            onPressed: () => Navigator.pushNamed(context, '/notifications'),
-            tooltip: 'الإشعارات',
-          ),
+          IconButton(icon: const Icon(Icons.shopping_cart_outlined, color: AppTheme.goldColor), onPressed: () => Navigator.pushNamed(context, '/cart'), tooltip: 'السلة'),
+          IconButton(icon: const Icon(Icons.notifications_outlined, color: AppTheme.goldColor), onPressed: () => Navigator.pushNamed(context, '/notifications'), tooltip: 'الإشعارات'),
         ],
       ),
       body: IndexedStack(index: _currentIndex, children: _screens),
@@ -167,13 +143,13 @@ class _MainNavigationState extends State<MainNavigation>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem('home', 'الرئيسية', 0),
-                _buildNavItem('store', 'المتجر', 1),
-                _buildNavItem('location', 'الخريطة', 2),
+                _buildNavItem(Icons.home_outlined, 'الرئيسية', 0),
+                _buildNavItem(Icons.storefront_outlined, 'المتجر', 1),
+                _buildNavItem(Icons.map_outlined, 'الخريطة', 2),
                 _buildCenterButton(),
-                _buildNavItem('wallet', 'المحفظة', 4),
-                _buildNavItem('chat', 'الدردشة', 5),
-                _buildNavItem('profile', 'حسابي', 6),
+                _buildNavItem(Icons.account_balance_wallet_outlined, 'المحفظة', 4),
+                _buildNavItem(Icons.chat_bubble_outline, 'الدردشة', 5),
+                _buildNavItem(Icons.person_outline, 'حسابي', 6),
               ],
             ),
           ),
@@ -182,7 +158,7 @@ class _MainNavigationState extends State<MainNavigation>
     );
   }
 
-  Widget _buildNavItem(String iconName, String label, int index) {
+  Widget _buildNavItem(IconData icon, String label, int index) {
     final bool isSelected = _currentIndex == (index > 3 ? index - 1 : index);
     return GestureDetector(
       onTap: () => _onItemTapped(index),
@@ -193,12 +169,7 @@ class _MainNavigationState extends State<MainNavigation>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset(
-              'assets/icons/svg/$iconName.svg',
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(isSelected ? AppTheme.goldColor : AppTheme.getSecondaryTextColor(context), BlendMode.srcIn),
-            ),
+            Icon(icon, color: isSelected ? AppTheme.goldColor : AppTheme.getSecondaryTextColor(context), size: 24),
             const SizedBox(height: 4),
             Text(label, style: TextStyle(fontFamily: 'Changa', fontSize: 11, color: isSelected ? AppTheme.goldColor : AppTheme.getSecondaryTextColor(context), fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
           ],
