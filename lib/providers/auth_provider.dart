@@ -27,6 +27,14 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> loginAsGuest() async {
+    _isLoggedIn = false;
+    _userData = null;
+    await LocalStorageService.setLoggedIn(false);
+    await LocalStorageService.setBool('is_guest', true);
+    notifyListeners();
+  }
+
   Future<void> logout() async {
     _isLoggedIn = false;
     _userData = null;
