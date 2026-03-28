@@ -59,7 +59,6 @@ flutter:
 
 flutter_native_splash:
   color: "#D4AF37"
-  image: assets/icons/logo.png
   android: true
   ios: true
   fullscreen: true
@@ -69,4 +68,3 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/icons/app_icon.png"
   adaptive_icon_background: "#D4AF37"
-  adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
