@@ -197,7 +197,7 @@ class SettingsScreen extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: AppTheme.getCardColor,
+        color: AppTheme.getCardColor(context),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
