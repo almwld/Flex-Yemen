@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../theme/app_theme.dart';
 import 'home_screen.dart';
 import 'all_ads_screen.dart';
@@ -7,6 +7,7 @@ import 'map/interactive_map_screen.dart';
 import 'wallet/wallet_screen.dart';
 import 'chat_screen.dart';
 import 'profile_screen.dart';
+import 'add_ad_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -15,142 +16,96 @@ class MainNavigation extends StatefulWidget {
   State<MainNavigation> createState() => _MainNavigationState();
 }
 
-class _MainNavigationState extends State<MainNavigation> {
+class _MainNavigationState extends State<MainNavigation>
+    with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
-  bool _isFabExpanded = false;
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    AllAdsScreen(),
-    InteractiveMapScreen(),
-    SizedBox(), // Placeholder for FAB
-    WalletScreen(),
-    ChatScreen(),
-    ProfileScreen(),
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const AllAdsScreen(),
+    const InteractiveMapScreen(),
+    const WalletScreen(),
+    const ChatScreen(),
+    const ProfileScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   void _onItemTapped(int index) {
     if (index == 3) {
-      // FAB clicked
       _showQuickActionsSheet();
       return;
     }
-
-    // Adjust index for screens after FAB
-    final screenIndex = index > 3 ? index - 1 : index;
-
-    setState(() {
-      _currentIndex = screenIndex;
-    });
+    int actualIndex = index > 3 ? index - 1 : index;
+    setState(() => _currentIndex = actualIndex);
   }
 
   void _showQuickActionsSheet() {
+    _animationController.forward();
+    Future.delayed(const Duration(milliseconds: 200), () {
+      _animationController.reverse();
+    });
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: AppTheme.getSurfaceColor(context),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 12),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppTheme.getDividerColor(context),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'إجراءات سريعة',
-              style: TextStyle(
-                fontFamily: 'Changa',
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.getTextColor(context),
-              ),
-            ),
-            const SizedBox(height: 24),
-            _buildQuickActionItem(
-              icon: Icons.add_circle_outline,
-              title: 'إضافة إعلان',
-              subtitle: 'أضف إعلاناً جديداً للبيع',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/add_ad');
-              },
-            ),
-            _buildQuickActionItem(
-              icon: Icons.shopping_bag_outlined,
-              title: 'إضافة منتج',
-              subtitle: 'أضف منتجاً جديداً للمتجر',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/seller_products');
-              },
-            ),
-            _buildQuickActionItem(
-              icon: Icons.handyman_outlined,
-              title: 'طلب خدمة',
-              subtitle: 'اطلب خدمة من مزودي الخدمات',
-              onTap: () {
-                Navigator.pop(context);
-                // Navigator.pushNamed(context, '/request_service');
-              },
-            ),
-            _buildQuickActionItem(
-              icon: Icons.account_balance_wallet_outlined,
-              title: 'استلام حوالة',
-              subtitle: 'استلم حوالة مالية',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/receive_transfer');
-              },
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      backgroundColor: AppTheme.getSurfaceColor(context),
+      builder: (context) => _buildQuickActionsSheet(context),
+    );
+  }
+
+  Widget _buildQuickActionsSheet(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 20), decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2))),
+          const Text('إجراءات سريعة', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 20),
+          _buildActionItem(context, Icons.add_circle_outline, 'إضافة إعلان', 'انشر إعلاناً جديداً', AppTheme.goldColor, () { Navigator.pop(context); Navigator.pushNamed(context, '/add_ad'); }),
+          _buildActionItem(context, Icons.shopping_bag_outlined, 'إضافة منتج', 'أضف منتجاً جديداً للبيع', Colors.green, () { Navigator.pop(context); Navigator.pushNamed(context, '/add_product'); }),
+          _buildActionItem(context, Icons.build_outlined, 'طلب خدمة', 'اطلب خدمة معينة', Colors.blue, () { Navigator.pop(context); Navigator.pushNamed(context, '/request_service'); }),
+          _buildActionItem(context, Icons.download_outlined, 'استلام حوالة', 'استلم حوالة مالية', Colors.purple, () { Navigator.pop(context); Navigator.pushNamed(context, '/receive_transfer'); }),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
 
-  Widget _buildQuickActionItem({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppTheme.goldColor, AppTheme.goldLight],
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Icon(icon, color: Colors.black),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: AppTheme.getTextColor(context),
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(
-          fontSize: 12,
-          color: AppTheme.getSecondaryTextColor(context),
-        ),
-      ),
+  Widget _buildActionItem(BuildContext context, IconData icon, String title, String subtitle, Color color, VoidCallback onTap) {
+    return GestureDetector(
       onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(16), border: Border.all(color: color.withOpacity(0.3))),
+        child: Row(
+          children: [
+            Container(width: 50, height: 50, decoration: BoxDecoration(color: color.withOpacity(0.2), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 28)),
+            const SizedBox(width: 16),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey[600]))])),
+            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+          ],
+        ),
+      ),
     );
   }
 
@@ -159,78 +114,22 @@ class _MainNavigationState extends State<MainNavigation> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          const HomeScreen(),
-          const AllAdsScreen(),
-          const InteractiveMapScreen(),
-          const SizedBox(), // Placeholder
-          const WalletScreen(),
-          const ChatScreen(),
-          const ProfileScreen(),
-        ],
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
+        decoration: BoxDecoration(color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface, boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, -5))]),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(Icons.home_outlined, 'الرئيسية', 0),
-                _buildNavItem(Icons.store_outlined, 'المتجر', 1),
-                _buildNavItem(Icons.map_outlined, 'الخريطة', 2),
-                // Golden FAB
-                GestureDetector(
-                  onTap: _showQuickActionsSheet,
-                  child: Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppTheme.goldColor, AppTheme.goldLight],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(28),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.goldColor.withOpacity(0.4),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.add,
-                      color: Colors.black,
-                      size: 32,
-                    ),
-                  ),
-                )
-                    .animate(
-                      onPlay: (controller) => controller.repeat(reverse: true),
-                    )
-                    .scale(
-                      begin: const Offset(1, 1),
-                      end: const Offset(1.05, 1.05),
-                      duration: 1.seconds,
-                      curve: Curves.easeInOut,
-                    ),
-                _buildNavItem(Icons.account_balance_wallet_outlined, 'المحفظة', 4),
-                _buildNavItem(Icons.chat_bubble_outline, 'الدردشة', 5),
-                _buildNavItem(Icons.person_outline, 'حسابي', 6),
+                _buildNavItem('home', 'الرئيسية', 0),
+                _buildNavItem('store', 'المتجر', 1),
+                _buildNavItem('location', 'الخريطة', 2),
+                _buildCenterButton(),
+                _buildNavItem('wallet', 'المحفظة', 4),
+                _buildNavItem('chat', 'الدردشة', 5),
+                _buildNavItem('profile', 'حسابي', 6),
               ],
             ),
           ),
@@ -239,30 +138,44 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
-    final isSelected = _currentIndex == index;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
+  Widget _buildNavItem(String iconName, String label, int index) {
+    final bool isSelected = _currentIndex == (index > 3 ? index - 1 : index);
     return GestureDetector(
       onTap: () => _onItemTapped(index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isSelected ? AppTheme.goldColor : (isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary),
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10,
-              color: isSelected ? AppTheme.goldColor : (isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary),
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(color: isSelected ? AppTheme.goldColor.withOpacity(0.1) : Colors.transparent, borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset(
+              'assets/icons/svg/$iconName.svg',
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(isSelected ? AppTheme.goldColor : AppTheme.getSecondaryTextColor(context), BlendMode.srcIn),
             ),
+            const SizedBox(height: 4),
+            Text(label, style: TextStyle(fontFamily: 'Changa', fontSize: 11, color: isSelected ? AppTheme.goldColor : AppTheme.getSecondaryTextColor(context), fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCenterButton() {
+    return GestureDetector(
+      onTap: () => _onItemTapped(3),
+      child: AnimatedBuilder(
+        animation: _scaleAnimation,
+        builder: (context, child) => Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Container(
+            width: 56, height: 56,
+            decoration: BoxDecoration(gradient: AppTheme.goldGradient, shape: BoxShape.circle, boxShadow: [BoxShadow(color: AppTheme.goldColor.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))]),
+            child: const Icon(Icons.add, color: AppTheme.darkText, size: 32),
           ),
-        ],
+        ),
       ),
     );
   }

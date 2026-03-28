@@ -1,28 +1,15 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
-import '../widgets/simple_app_bar.dart';
+import '../widgets/custom_app_bar.dart';
 
 class MyOrdersScreen extends StatelessWidget {
   const MyOrdersScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const SimpleAppBar(title: 'طلباتي'),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.shopping_bag, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
-            const SizedBox(height: 16),
-            const Text('طلباتي', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
-          ],
-        ),
-      ),
+      appBar: const CustomAppBar(title: 'طلباتي'),
+      body: const Center(child: Text('طلباتي - قيد التطوير')),
     );
   }
 }

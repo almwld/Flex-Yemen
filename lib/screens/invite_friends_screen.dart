@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
-import '../widgets/simple_app_bar.dart';
+import '../widgets/custom_app_bar.dart';
+import 'package:share_plus/share_plus.dart';
 
 class InviteFriendsScreen extends StatelessWidget {
   const InviteFriendsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const SimpleAppBar(title: 'دعوة الأصدقاء'),
+      appBar: const CustomAppBar(title: 'دعوة الأصدقاء'),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.person_add, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            const Icon(Icons.people, size: 80, color: AppTheme.goldColor),
+            const SizedBox(height: 20),
+            const Text('ادعُ أصدقاءك واحصل على مكافآت', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            const Text('دعوة الأصدقاء', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
+            const Text('لكل صديق يسجل عبر رابطك، ستحصل على 100 نقطة', style: TextStyle(color: Colors.grey)),
+            const SizedBox(height: 30),
+            ElevatedButton.icon(
+              onPressed: () => Share.share('انضم إلى Flex Yemen عبر الرابط: https://flexyemen.app'),
+              icon: const Icon(Icons.share),
+              label: const Text('مشاركة الرابط'),
+              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.goldColor, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12)),
+            ),
           ],
         ),
       ),
