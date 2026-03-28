@@ -43,9 +43,6 @@ app.*.map.json
 /android/app/release
 
 # Environment files
-.env
-.env.local
-.env.production
 
 # Firebase configuration
 google-services.json
@@ -57,3 +54,8 @@ GoogleService-Info.plist
 
 # OS
 Thumbs.db
+
+# Generated files
+android/app/src/main/res/mipmap-*
+ios/Runner/Assets.xcassets/AppIcon.appiconset/
+ios/Runner/Assets.xcassets/LaunchImage.imageset/
