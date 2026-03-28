@@ -131,7 +131,7 @@ class _GardenScreenState extends State<GardenScreen> {
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  _points += task['reward'];
+                  _points += task['reward'] as int;
                 });
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('حصلت على +${task['reward']} نقطة!')),
@@ -166,7 +166,7 @@ class _GardenScreenState extends State<GardenScreen> {
             onPressed: canAfford
                 ? () {
                     setState(() {
-                      _points -= reward['cost'];
+                      _points -= reward['cost'] as int;
                     });
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('تم استبدال ${reward['name']} بنجاح!')),
