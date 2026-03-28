@@ -1,43 +1,88 @@
 name: Build Flex Yemen APK
+
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.0'
+          channel: 'stable'
+      
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Setup Android
+      
+      - name: Setup Android project
         run: |
+          # إعادة إنشاء مجلد android
+          rm -rf android
           flutter create --platforms=android --project-name=flex_yemen --org=com.flexyemen .
+          
+          # تحديث build.gradle بإصدارات ثابتة
           cat > android/build.gradle << 'GRADLE'
           buildscript {
-              ext.kotlin_version = '2.1.0'
-              repositories { google(); mavenCentral() }
+              ext.kotlin_version = '1.9.0'
+              repositories {
+                  google()
+                  mavenCentral()
+              }
               dependencies {
-                  classpath 'com.android.tools.build:gradle:8.7.0'
-                  classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:\$kotlin_version"
+                  classpath 'com.android.tools.build:gradle:7.4.2'
+                  classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
               }
           }
-          allprojects { repositories { google(); mavenCentral() } }
+          allprojects {
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
           rootProject.buildDir = '../build'
-          subprojects { project.buildDir = "\${rootProject.buildDir}/\${project.name}" }
-          subprojects { project.evaluationDependsOn(':app') }
-          tasks.register("clean", Delete) { delete rootProject.buildDir }
+          subprojects {
+              project.buildDir = "\${rootProject.buildDir}/\${project.name}"
+          }
+          subprojects {
+              project.evaluationDependsOn(':app')
+          }
+          tasks.register("clean", Delete) {
+              delete rootProject.buildDir
+          }
           GRADLE
-      - run: flutter pub get
-      - run: echo "SUPABASE_URL=https://ziqpohdxtemsmunnhlkm.supabase.co" > .env
-      - run: flutter build apk --release --split-per-abi
-      - uses: actions/upload-artifact@v4
+          
+          # تحديث gradle-wrapper.properties
+          mkdir -p android/gradle/wrapper
+          cat > android/gradle/wrapper/gradle-wrapper.properties << 'WRAPPER'
+          distributionBase=GRADLE_USER_HOME
+          distributionPath=wrapper/dists
+          zipStoreBase=GRADLE_USER_HOME
+          zipStorePath=wrapper/dists
+          distributionUrl=https\://services.gradle.org/distributions/gradle-8.0-all.zip
+          WRAPPER
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Create .env file
+        run: |
+          echo "SUPABASE_URL=https://ziqpohdxtemsmunnhlkm.supabase.co" > .env
+          echo "SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppcXBvaGR4dGVtc211bm5obGttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3ODQzNDcsImV4cCI6MjA4NzM2MDM0N30.ABAg5YZSrrAtBTWATJ3eRTmo4BuZVyVlrMV1HZjRWs0" >> .env
+      
+      - name: Build APK
+        run: flutter build apk --release --split-per-abi
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
-          name: apks
+          name: flex-yemen-apks
           path: build/app/outputs/flutter-apk/*.apk
+          retention-days: 30
