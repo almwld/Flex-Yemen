@@ -1,231 +1,174 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
-import '../../providers/theme_manager.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../../widgets/custom_app_bar.dart';
+import 'account_settings_screen.dart';
+import 'security_settings_screen.dart';
+import 'privacy_settings_screen.dart';
+import 'notifications_settings_screen.dart';
+import 'language_screen.dart';
+import 'payment_methods_screen.dart';
+import 'about_screen.dart';
+import 'help_support_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
+  final List<Map<String, dynamic>> _settingsGroups = const [
+    {
+      'title': 'الحساب',
+      'icon': Icons.person_outline,
+      'color': 0xFF4CAF50,
+      'items': [
+        {'title': 'معلومات الحساب', 'route': '/account_info', 'icon': Icons.info_outline},
+        {'title': 'تغيير كلمة المرور', 'route': '/change_password', 'icon': Icons.lock_outline},
+        {'title': 'الأجهزة المتصلة', 'route': '/connected_devices', 'icon': Icons.devices},
+        {'title': 'سجل الدخول', 'route': '/login_history', 'icon': Icons.history},
+      ],
+    },
+    {
+      'title': 'الأمان والخصوصية',
+      'icon': Icons.security,
+      'color': 0xFF2196F3,
+      'items': [
+        {'title': 'المصادقة البيومترية', 'route': '/biometric_auth', 'icon': Icons.fingerprint},
+        {'title': 'المصادقة الثنائية', 'route': '/two_factor', 'icon': Icons.security},
+        {'title': 'إعدادات الخصوصية', 'route': '/privacy_settings', 'icon': Icons.privacy_tip},
+      ],
+    },
+    {
+      'title': 'التخصيص',
+      'icon': Icons.palette,
+      'color': 0xFFFF9800,
+      'items': [
+        {'title': 'المظهر', 'route': '/theme', 'icon': Icons.brightness_medium},
+        {'title': 'اللغة', 'route': '/language', 'icon': Icons.language},
+        {'title': 'الإشعارات', 'route': '/notifications_settings', 'icon': Icons.notifications},
+      ],
+    },
+    {
+      'title': 'المدفوعات',
+      'icon': Icons.payment,
+      'color': 0xFF9C27B0,
+      'items': [
+        {'title': 'طرق الدفع', 'route': '/payment_methods', 'icon': Icons.credit_card},
+        {'title': 'سجل المعاملات', 'route': '/transactions', 'icon': Icons.history},
+        {'title': 'التحويلات', 'route': '/transfers', 'icon': Icons.swap_horiz},
+      ],
+    },
+    {
+      'title': 'الدعم',
+      'icon': Icons.support_agent,
+      'color': 0xFF00BCD4,
+      'items': [
+        {'title': 'المساعدة والدعم', 'route': '/help_support', 'icon': Icons.help_outline},
+        {'title': 'تذاكر الدعم', 'route': '/support_tickets', 'icon': Icons.confirmation_number},
+        {'title': 'الأسئلة الشائعة', 'route': '/faq', 'icon': Icons.quiz},
+        {'title': 'تواصل معنا', 'route': '/contact_us', 'icon': Icons.contact_mail},
+      ],
+    },
+    {
+      'title': 'حول التطبيق',
+      'icon': Icons.info,
+      'color': 0xFF795548,
+      'items': [
+        {'title': 'عن التطبيق', 'route': '/about', 'icon': Icons.info_outline},
+        {'title': 'سياسة الخصوصية', 'route': '/privacy_policy', 'icon': Icons.privacy_tip},
+        {'title': 'الشروط والأحكام', 'route': '/terms', 'icon': Icons.description},
+        {'title': 'سجل التحديثات', 'route': '/changelog', 'icon': Icons.update},
+        {'title': 'تقييم التطبيق', 'route': '/rate_app', 'icon': Icons.star},
+        {'title': 'مشاركة التطبيق', 'route': '/share_app', 'icon': Icons.share},
+      ],
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final themeManager = context.watch<ThemeManager>();
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const SimpleAppBar(title: 'الإعدادات'),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Account Section
-            _buildSectionTitle('الحساب'),
-            _buildSettingsGroup([
-              _buildSettingItem(
-                icon: Icons.person_outline,
-                title: 'معلومات الحساب',
-                onTap: () => Navigator.pushNamed(context, '/account_info'),
-              ),
-              _buildSettingItem(
-                icon: Icons.lock_outline,
-                title: 'تغيير كلمة المرور',
-                onTap: () => Navigator.pushNamed(context, '/change_password'),
-              ),
-              _buildSettingItem(
-                icon: Icons.devices_outlined,
-                title: 'الأجهزة المتصلة',
-                onTap: () => Navigator.pushNamed(context, '/connected_devices'),
-              ),
-              _buildSettingItem(
-                icon: Icons.history_outlined,
-                title: 'سجل الدخول',
-                onTap: () => Navigator.pushNamed(context, '/login_history'),
-              ),
-            ]),
+      appBar: const CustomAppBar(title: 'الإعدادات'),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _settingsGroups.length,
+        itemBuilder: (context, index) {
+          final group = _settingsGroups[index];
+          return _buildSettingsGroup(context, group, isDark);
+        },
+      ),
+    );
+  }
 
-            // Security Section
-            _buildSectionTitle('الأمان والخصوصية'),
-            _buildSettingsGroup([
-              _buildSettingItem(
-                icon: Icons.fingerprint,
-                title: 'المصادقة البيومترية',
-                onTap: () => Navigator.pushNamed(context, '/biometric_auth'),
-              ),
-              _buildSettingItem(
-                icon: Icons.security_outlined,
-                title: 'المصادقة الثنائية',
-                onTap: () => Navigator.pushNamed(context, '/two_factor'),
-              ),
-              _buildSettingItem(
-                icon: Icons.privacy_tip_outlined,
-                title: 'إعدادات الخصوصية',
-                onTap: () => Navigator.pushNamed(context, '/privacy_settings'),
-              ),
-            ]),
-
-            // Customization Section
-            _buildSectionTitle('التخصيص'),
-            _buildSettingsGroup([
-              _buildSettingItem(
-                icon: isDark ? Icons.dark_mode : Icons.light_mode,
-                title: 'المظهر',
-                subtitle: isDark ? 'وضع ليلي' : 'وضع نهاري',
-                trailing: Switch(
-                  value: themeManager.isDarkMode,
-                  onChanged: (value) => themeManager.toggleTheme(),
-                  activeColor: AppTheme.goldColor,
+  Widget _buildSettingsGroup(BuildContext context, Map<String, dynamic> group, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: Color(group['color']).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                onTap: () {},
+                child: Icon(
+                  group['icon'],
+                  color: Color(group['color']),
+                  size: 18,
+                ),
               ),
-              _buildSettingItem(
-                icon: Icons.language_outlined,
-                title: 'اللغة',
-                subtitle: 'العربية',
-                onTap: () => Navigator.pushNamed(context, '/language'),
+              const SizedBox(width: 12),
+              Text(
+                group['title'],
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(group['color']),
+                ),
               ),
-              _buildSettingItem(
-                icon: Icons.notifications_outlined,
-                title: 'الإشعارات',
-                onTap: () => Navigator.pushNamed(context, '/notifications_settings'),
-              ),
-            ]),
-
-            // Payments Section
-            _buildSectionTitle('المدفوعات'),
-            _buildSettingsGroup([
-              _buildSettingItem(
-                icon: Icons.payment_outlined,
-                title: 'طرق الدفع',
-                onTap: () => Navigator.pushNamed(context, '/payment_methods'),
-              ),
-              _buildSettingItem(
-                icon: Icons.receipt_long_outlined,
-                title: 'سجل المعاملات',
-                onTap: () => Navigator.pushNamed(context, '/transactions'),
-              ),
-              _buildSettingItem(
-                icon: Icons.swap_horiz_outlined,
-                title: 'التحويلات',
-                onTap: () => Navigator.pushNamed(context, '/transfer'),
-              ),
-            ]),
-
-            // Support Section
-            _buildSectionTitle('الدعم'),
-            _buildSettingsGroup([
-              _buildSettingItem(
-                icon: Icons.help_outline,
-                title: 'المساعدة والدعم',
-                onTap: () => Navigator.pushNamed(context, '/help_support'),
-              ),
-              _buildSettingItem(
-                icon: Icons.confirmation_number_outlined,
-                title: 'تذاكر الدعم',
-                onTap: () => Navigator.pushNamed(context, '/support_tickets'),
-              ),
-              _buildSettingItem(
-                icon: Icons.question_answer_outlined,
-                title: 'الأسئلة الشائعة',
-                onTap: () => Navigator.pushNamed(context, '/faq'),
-              ),
-              _buildSettingItem(
-                icon: Icons.contact_support_outlined,
-                title: 'تواصل معنا',
-                onTap: () => Navigator.pushNamed(context, '/contact_us'),
-              ),
-            ]),
-
-            // About Section
-            _buildSectionTitle('حول التطبيق'),
-            _buildSettingsGroup([
-              _buildSettingItem(
-                icon: Icons.info_outline,
-                title: 'عن التطبيق',
-                onTap: () => Navigator.pushNamed(context, '/about'),
-              ),
-              _buildSettingItem(
-                icon: Icons.policy_outlined,
-                title: 'سياسة الخصوصية',
-                onTap: () => Navigator.pushNamed(context, '/privacy_policy'),
-              ),
-              _buildSettingItem(
-                icon: Icons.gavel_outlined,
-                title: 'الشروط والأحكام',
-                onTap: () => Navigator.pushNamed(context, '/terms'),
-              ),
-              _buildSettingItem(
-                icon: Icons.update_outlined,
-                title: 'سجل التحديثات',
-                onTap: () => Navigator.pushNamed(context, '/changelog'),
-              ),
-              _buildSettingItem(
-                icon: Icons.star_outline,
-                title: 'تقييم التطبيق',
-                onTap: () {},
-              ),
-              _buildSettingItem(
-                icon: Icons.share_outlined,
-                title: 'مشاركة التطبيق',
-                onTap: () {},
-              ),
-            ]),
-
-            const SizedBox(height: 24),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontFamily: 'Changa',
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-          color: AppTheme.goldColor,
+        Card(
+          margin: const EdgeInsets.only(bottom: 16),
+          color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            children: (group['items'] as List<Map<String, dynamic>>).map((item) {
+              return ListTile(
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Color(group['color']).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    item['icon'],
+                    color: Color(group['color']),
+                    size: 20,
+                  ),
+                ),
+                title: Text(
+                  item['title'],
+                  style: TextStyle(
+                    fontFamily: 'Changa',
+                    color: AppTheme.getTextColor(context),
+                  ),
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.pushNamed(context, item['route']);
+                },
+              );
+            }).toList(),
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSettingsGroup(List<Widget> children) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: AppTheme.getCardColor(context),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: children,
-      ),
-    );
-  }
-
-  Widget _buildSettingItem({
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    Widget? trailing,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: AppTheme.goldColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, color: AppTheme.goldColor, size: 20),
-      ),
-      title: Text(title),
-      subtitle: subtitle != null ? Text(subtitle) : null,
-      trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: onTap,
+      ],
     );
   }
 }
