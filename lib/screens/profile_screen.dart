@@ -1,239 +1,213 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
-import '../providers/auth_provider.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
+import '../providers/auth_provider.dart';
+import 'settings/settings_screen.dart';
+import 'my_ads_screen.dart';
+import 'favorites_screen.dart';
+import 'my_orders_screen.dart';
+import 'followers_screen.dart';
+import 'reviews_screen.dart';
+import 'garden_screen.dart';
+import 'help_support_screen.dart';
+import 'invite_friends_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  final List<Map<String, dynamic>> _menuItems = const [
-    {'icon': Icons.campaign_outlined, 'title': 'إعلاناتي', 'route': '/my_ads'},
-    {'icon': Icons.favorite_outline, 'title': 'المفضلة', 'route': '/favorites'},
-    {'icon': Icons.shopping_bag_outlined, 'title': 'طلباتي', 'route': '/my_orders'},
-    {'icon': Icons.people_outline, 'title': 'المتابعون', 'route': '/followers'},
-    {'icon': Icons.star_outline, 'title': 'المراجعات', 'route': '/reviews'},
-    {'icon': Icons.local_florist_outlined, 'title': 'نقاطي', 'route': '/garden'},
-    {'icon': Icons.settings_outlined, 'title': 'الإعدادات', 'route': '/settings'},
-    {'icon': Icons.help_outline, 'title': 'المساعدة', 'route': '/help_support'},
-    {'icon': Icons.share_outlined, 'title': 'دعوة الأصدقاء', 'route': '/invite_friends'},
+  final List<Map<String, dynamic>> _profileMenu = const [
+    {'title': 'إعلاناتي', 'icon': Icons.post_add, 'color': 0xFF4CAF50, 'route': '/my_ads'},
+    {'title': 'المفضلة', 'icon': Icons.favorite_border, 'color': 0xFFE91E63, 'route': '/favorites'},
+    {'title': 'طلباتي', 'icon': Icons.shopping_bag_outlined, 'color': 0xFFFF9800, 'route': '/my_orders'},
+    {'title': 'المتابعون', 'icon': Icons.people_outline, 'color': 0xFF2196F3, 'route': '/followers'},
+    {'title': 'المراجعات', 'icon': Icons.rate_review, 'color': 0xFF9C27B0, 'route': '/reviews'},
+    {'title': 'نقاطي', 'icon': Icons.stars, 'color': 0xFFD4AF37, 'route': '/garden'},
+    {'title': 'الإعدادات', 'icon': Icons.settings_outlined, 'color': 0xFF607D8B, 'route': '/settings'},
+    {'title': 'المساعدة', 'icon': Icons.help_outline, 'color': 0xFF00BCD4, 'route': '/help_support'},
+    {'title': 'دعوة الأصدقاء', 'icon': Icons.share, 'color': 0xFF4CAF50, 'route': '/invite_friends'},
   ];
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final authProvider = context.watch<AuthProvider>();
+    final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const CustomAppBar(title: 'حسابي'),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // User Info Card
-            _buildUserInfoCard(context, authProvider),
-
-            const SizedBox(height: 24),
-
-            // Stats Row
-            _buildStatsRow(context),
-
-            const SizedBox(height: 24),
-
-            // Menu Items
-            _buildMenuItems(context),
-
-            const SizedBox(height: 24),
-
-            // Logout Button
-            if (authProvider.isLoggedIn)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () async {
-                      await authProvider.logout();
-                      if (context.mounted) {
-                        Navigator.pushReplacementNamed(context, '/login');
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.error.withOpacity(0.1),
-                      foregroundColor: AppTheme.error,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    icon: const Icon(Icons.logout),
-                    label: const Text('تسجيل الخروج'),
-                  ),
-                ),
+            // معلومات المستخدم
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                gradient: AppTheme.goldGradient,
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
               ),
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.white,
+                        backgroundImage: authProvider.userAvatar != null
+                            ? NetworkImage(authProvider.userAvatar!)
+                            : null,
+                        child: authProvider.userAvatar == null
+                            ? const Icon(Icons.person, size: 50, color: AppTheme.goldColor)
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: AppTheme.goldColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.camera_alt, size: 16, color: AppTheme.darkText),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    authProvider.userName ?? 'ضيف',
+                    style: const TextStyle(
+                      fontFamily: 'Changa',
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.darkText,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    authProvider.userEmail ?? 'guest@flexyemen.com',
+                    style: const TextStyle(
+                      fontFamily: 'Changa',
+                      color: AppTheme.darkText,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildStat('الإعلانات', '12'),
+                      _buildStat('المتابعون', '150'),
+                      _buildStat('التقييم', '4.8'),
+                      _buildStat('نقاطي', '1,250'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // القائمة
+            ..._profileMenu.map((item) => _buildMenuItem(
+                  context,
+                  item['title'],
+                  item['icon'],
+                  Color(item['color']),
+                  item['route'],
+                )),
 
             const SizedBox(height: 24),
+
+            // زر تسجيل الخروج
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: CustomButton(
+                text: 'تسجيل الخروج',
+                onPressed: () => _showLogoutDialog(context),
+                backgroundColor: AppTheme.error,
+                textColor: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 32),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildUserInfoCard(BuildContext context, AuthProvider authProvider) {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppTheme.goldColor, AppTheme.goldLight],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  Widget _buildStat(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            fontFamily: 'Changa',
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.darkText,
+          ),
         ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.goldColor.withOpacity(0.4),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+        Text(
+          label,
+          style: const TextStyle(
+            fontFamily: 'Changa',
+            fontSize: 12,
+            color: AppTheme.darkText,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMenuItem(BuildContext context, String title, IconData icon, Color color, String route) {
+    return ListTile(
+      leading: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: color, size: 22),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontFamily: 'Changa',
+          color: AppTheme.getTextColor(context),
+        ),
+      ),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: () => Navigator.pushNamed(context, route),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('تسجيل الخروج'),
+        content: const Text('هل أنت متأكد من رغبتك في تسجيل الخروج؟'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await context.read<AuthProvider>().logout();
+              if (context.mounted) {
+                Navigator.pushReplacementNamed(context, '/login');
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.error,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('تسجيل الخروج'),
           ),
         ],
       ),
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: Colors.white.withOpacity(0.3),
-                child: authProvider.userAvatar != null
-                    ? ClipOval(child: Image.network(authProvider.userAvatar!))
-                    : const Icon(Icons.person, size: 50, color: Colors.black),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      color: Colors.black,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.camera_alt, color: AppTheme.goldColor, size: 16),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            authProvider.userName ?? 'ضيف',
-            style: const TextStyle(
-              fontFamily: 'Changa',
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            authProvider.userEmail ?? 'guest@flexyemen.com',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black.withOpacity(0.7),
-            ),
-          ),
-          if (authProvider.isGuest) ...[
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: AppTheme.goldColor,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: const Text('تسجيل الدخول'),
-            ),
-          ],
-        ],
-      ),
-    ).animate().fadeIn(duration: 600.ms).scale(delay: 100.ms);
-  }
-
-  Widget _buildStatsRow(BuildContext context) {
-    final stats = [
-      {'value': '12', 'label': 'إعلان'},
-      {'value': '48', 'label': 'متابع'},
-      {'value': '4.5', 'label': 'تقييم'},
-      {'value': '1.2K', 'label': 'نقطة'},
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: stats.map((stat) {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            decoration: BoxDecoration(
-              color: AppTheme.getCardColor(context),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  stat['value']!,
-                  style: TextStyle(
-                    fontFamily: 'Changa',
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.getTextColor(context),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  stat['label']!,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppTheme.getSecondaryTextColor(context),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
-    ).animate().fadeIn(delay: 200.ms);
-  }
-
-  Widget _buildMenuItems(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: _menuItems.map((item) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            decoration: BoxDecoration(
-              color: AppTheme.getCardColor(context),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppTheme.goldColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(item['icon'] as IconData, color: AppTheme.goldColor),
-              ),
-              title: Text(item['title'] as String),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () => Navigator.pushNamed(context, item['route'] as String),
-            ),
-          );
-        }).toList(),
-      ),
-    ).animate().fadeIn(delay: 300.ms);
+    );
   }
 }
