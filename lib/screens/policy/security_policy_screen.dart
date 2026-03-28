@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../../widgets/custom_app_bar.dart';
 
 class SecurityPolicyScreen extends StatelessWidget {
   const SecurityPolicyScreen({super.key});
@@ -10,87 +10,69 @@ class SecurityPolicyScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const SimpleAppBar(title: 'سياسة الأمان'),
+      appBar: const CustomAppBar(title: 'سياسة الأمان'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSection(
-              'حماية الحساب',
-              '''• المستخدم مسؤول عن الحفاظ على سرية كلمة المرور
-• يُمنع مشاركة معلومات تسجيل الدخول مع الآخرين
-• يجب استخدام كلمات مرور قوية وفريدة
-• يُنصح بتفعيل المصادقة الثنائية
-• يجب تسجيل الخروج من الأجهزة العامة''',
-            ),
-            _buildSection(
-              'المدفوعات الآمنة',
-              '''• نستخدم قنوات دفع آمنة وموثوقة
-• لا يتم تخزين بيانات البطاقات الائتمانية على خوادمنا
-• جميع المعاملات مشفرة باستخدام SSL/TLS
-• نتعامل مع مزودي دفع معتمدين ومرخصين''',
-            ),
-            _buildSection(
-              'مكافحة الاحتيال',
-              '''• مراقبة مستمرة للعمليات المشبوهة
-• إيقاف الحسابات المشتبه في ارتكابها احتيالاً
-• التحقق من هوية المستخدمين
-• نظام تقييم للبائعين والمشترين''',
-            ),
-            _buildSection(
-              'الإبلاغ عن المشاكل',
-              '''يمكنك الإبلاغ عن:
-• عمليات مشبوهة أو غير مصرح بها
-• حسابات مزيفة أو مخادعة
-• منتجات مقلدة أو غير أصلية
-• سلوك غير لائق من المستخدمين
-
-للإبلاغ: security@flexyemen.com''',
-            ),
-            _buildSection(
-              'الإجراءات الأمنية',
-              '''• تحديثات أمنية منتظمة للتطبيق
-• فحص دوري للثغرات الأمنية
-• نسخ احتياطي يومي للبيانات
-• فرق أمن متخصص على مدار الساعة''',
-            ),
-            _buildSection(
-              'نصائح الأمان',
-              '''• لا تنقر على روابط مشبوهة
-• تحقق من هوية البائع قبل الشراء
-• استخدم شبكات Wi-Fi آمنة فقط
-• حافظ على تحديث التطبيق
-• لا تشارك رمز التحقق مع أحد''',
-            ),
+            _buildHeader('حماية الحساب', context),
+            _buildBulletPoint('استخدم كلمة مرور قوية وفريدة', context),
+            _buildBulletPoint('لا تشارك معلومات حسابك مع أي شخص', context),
+            _buildBulletPoint('قم بتسجيل الخروج بعد الاستخدام على الأجهزة المشتركة', context),
+            _buildBulletPoint('فعّل المصادقة الثنائية لحماية إضافية', context),
+            
+            const SizedBox(height: 16),
+            _buildHeader('المدفوعات والمعاملات المالية', context),
+            _buildBulletPoint('جميع المعاملات المالية مشفرة بتقنية SSL', context),
+            _buildBulletPoint('لا يتم تخزين بيانات بطاقات الائتمان', context),
+            _buildBulletPoint('قنوات دفع آمنة ومعتمدة', context),
+            _buildBulletPoint('إشعارات فورية لأي عملية دفع', context),
+            
+            const SizedBox(height: 16),
+            _buildHeader('مكافحة الاحتيال', context),
+            _buildBulletPoint('مراقبة مستمرة للعمليات المشبوهة', context),
+            _buildBulletPoint('إيقاف الحسابات المشبوهة مؤقتاً', context),
+            _buildBulletPoint('التحقق من الهوية للتجار', context),
+            _buildBulletPoint('توثيق عمليات التحويل الكبيرة', context),
+            
+            const SizedBox(height: 16),
+            _buildHeader('حماية البيانات', context),
+            _buildBulletPoint('تشفير البيانات الحساسة', context),
+            _buildBulletPoint('نسخ احتياطي منتظم للبيانات', context),
+            _buildBulletPoint('وصول محدود للموظفين', context),
+            _buildBulletPoint('مراجعات أمنية دورية', context),
+            
+            const SizedBox(height: 16),
+            _buildHeader('الإبلاغ عن المشكلات', context),
+            _buildBulletPoint('يمكنك الإبلاغ عن أي نشاط مشبوه', context),
+            _buildBulletPoint('الإبلاغ عن حسابات مزيفة', context),
+            _buildBulletPoint('الإبلاغ عن منتجات مخالفة', context),
+            _buildBulletPoint('قناة اتصال آمنة للشكاوى', context),
+            
+            const SizedBox(height: 16),
+            _buildHeader('نصائح أمنية للمستخدمين', context),
+            _buildBulletPoint('لا تفتح روابط مشبوهة', context),
+            _buildBulletPoint('تأكد من عنوان الموقع قبل إدخال بياناتك', context),
+            _buildBulletPoint('استخدم اتصال إنترنت آمن', context),
+            _buildBulletPoint('حدث تطبيقك باستمرار', context),
+            
             const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppTheme.info.withOpacity(0.1),
+                color: AppTheme.goldColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.info.withOpacity(0.3)),
+                border: Border.all(color: AppTheme.goldColor.withOpacity(0.3)),
               ),
-              child: const Row(
-                children: [
-                  Icon(Icons.info_outline, color: AppTheme.info),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'في حال اكتشاف أي نشاط مشبوه، يرجى الإبلاغ فوراً.',
-                      style: TextStyle(color: AppTheme.info),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'آخر تحديث: مارس 2026',
-              style: TextStyle(
-                color: AppTheme.getSecondaryTextColor(context),
-                fontSize: 12,
+              child: Text(
+                'للإبلاغ عن ثغرة أمنية: security@flexyemen.com',
+                style: TextStyle(
+                  fontFamily: 'Changa',
+                  fontSize: 12,
+                  color: AppTheme.getSecondaryTextColor(context),
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           ],
@@ -99,28 +81,46 @@ class SecurityPolicyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(String title, String content) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontFamily: 'Changa',
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.goldColor,
-          ),
+  Widget _buildHeader(String title, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 8),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontFamily: 'Changa',
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: AppTheme.getTextColor(context),
         ),
-        const SizedBox(height: 8),
-        Text(
-          content,
-          style: const TextStyle(
-            height: 1.6,
+      ),
+    );
+  }
+
+  Widget _buildBulletPoint(String text, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8, left: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '• ',
+            style: TextStyle(
+              fontSize: 14,
+              color: AppTheme.goldColor,
+            ),
           ),
-        ),
-        const SizedBox(height: 24),
-      ],
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontFamily: 'Changa',
+                fontSize: 14,
+                color: AppTheme.getSecondaryTextColor(context),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

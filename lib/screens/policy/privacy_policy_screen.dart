@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../../widgets/custom_app_bar.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
@@ -10,72 +10,102 @@ class PrivacyPolicyScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const SimpleAppBar(title: 'سياسة الخصوصية'),
+      appBar: const CustomAppBar(title: 'سياسة الخصوصية'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSection(
-              'مقدمة',
-              'نحن في Flex Yemen نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. توضح هذه السياسة كيفية جمعنا واستخدامنا وحمايتنا لمعلوماتك.',
+            _buildHeader('مقدمة', context),
+            _buildParagraph(
+              'نحن في Flex Yemen نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. '
+              'توضح هذه السياسة كيفية جمع واستخدام وحماية معلوماتك عند استخدام منصتنا.',
+              context,
             ),
-            _buildSection(
-              'المعلومات التي نجمعها',
-              '''• المعلومات الشخصية: الاسم، رقم الهاتف، البريد الإلكتروني، العنوان
-• معلومات المعاملات: الطلبات، عمليات الشراء، سجل الدفع
-• المعلومات التقنية: نوع الجهاز، نظام التشغيل، عنوان IP
-• معلومات الموقع: الموقع الجغرافي لتحسين الخدمة''',
+            
+            const SizedBox(height: 16),
+            _buildHeader('المعلومات التي نجمعها', context),
+            _buildSubHeader('معلومات شخصية', context),
+            _buildBulletPoint('الاسم الكامل', context),
+            _buildBulletPoint('رقم الهاتف', context),
+            _buildBulletPoint('البريد الإلكتروني', context),
+            _buildBulletPoint('العنوان', context),
+            
+            _buildSubHeader('معلومات المعاملات', context),
+            _buildBulletPoint('الطلبات والمشتريات', context),
+            _buildBulletPoint('سجل الدفع', context),
+            _buildBulletPoint('عناوين التوصيل', context),
+            
+            _buildSubHeader('معلومات تقنية', context),
+            _buildBulletPoint('نوع الجهاز ونظام التشغيل', context),
+            _buildBulletPoint('عنوان IP', context),
+            _buildBulletPoint('بيانات الاستخدام', context),
+            
+            const SizedBox(height: 16),
+            _buildHeader('كيف نستخدم معلوماتك', context),
+            _buildBulletPoint('تشغيل وتحسين التطبيق', context),
+            _buildBulletPoint('معالجة الطلبات والمدفوعات', context),
+            _buildBulletPoint('إرسال الإشعارات والتحديثات', context),
+            _buildBulletPoint('دعم العملاء', context),
+            _buildBulletPoint('منع الاحتيال وتعزيز الأمان', context),
+            
+            const SizedBox(height: 16),
+            _buildHeader('مشاركة المعلومات', context),
+            _buildParagraph(
+              'لا نقوم ببيع بياناتك الشخصية. نشارك معلوماتك فقط مع:',
+              context,
             ),
-            _buildSection(
-              'استخدام المعلومات',
-              '''نستخدم معلوماتك من أجل:
-• تشغيل التطبيق وتقديم الخدمات
-• معالجة الطلبات والمدفوعات
-• إرسال الإشعارات والتحديثات
-• تقديم دعم العملاء
-• تحسين تجربة المستخدم''',
+            _buildBulletPoint('مزودي خدمة الدفع (لإتمام المعاملات)', context),
+            _buildBulletPoint('شركات الشحن والتوصيل', context),
+            _buildBulletPoint('الجهات القانونية عند الضرورة', context),
+            
+            const SizedBox(height: 16),
+            _buildHeader('حماية البيانات', context),
+            _buildBulletPoint('تشفير SSL لجميع البيانات المنقولة', context),
+            _buildBulletPoint('أنظمة حماية متقدمة', context),
+            _buildBulletPoint('وصول محدود للبيانات', context),
+            _buildParagraph(
+              'ملاحظة: لا يوجد نظام آمن بنسبة 100%، وننصحك بحماية بياناتك.', context),
+            
+            const SizedBox(height: 16),
+            _buildHeader('حقوق المستخدم', context),
+            _buildBulletPoint('الوصول إلى بياناتك الشخصية', context),
+            _buildBulletPoint('تعديل بياناتك في أي وقت', context),
+            _buildBulletPoint('طلب حذف حسابك', context),
+            _buildBulletPoint('إيقاف الإشعارات', context),
+            
+            const SizedBox(height: 16),
+            _buildHeader('التعديلات على السياسة', context),
+            _buildParagraph(
+              'قد نقوم بتحديث سياسة الخصوصية من وقت لآخر. سيتم إعلامك بأي تغييرات جوهرية عبر التطبيق.',
+              context,
             ),
-            _buildSection(
-              'مشاركة البيانات',
-              '''• لا نبيع بياناتك لأي طرف ثالث
-• نشارك فقط مع مزودي الدفع وشركات الشحن
-• قد نشارك مع السلطات إذا تطلب القانون ذلك''',
+            
+            const SizedBox(height: 16),
+            _buildHeader('التواصل', context),
+            _buildParagraph(
+              'للاستفسارات حول سياسة الخصوصية، يرجى التواصل معنا عبر:',
+              context,
             ),
-            _buildSection(
-              'حماية البيانات',
-              '''• نستخدم تشفير SSL لحماية البيانات
-• أنظمة حماية متقدمة ضد الاختراق
-• تحديثات أمنية منتظمة
-• فريق أمن متخصص''',
-            ),
-            _buildSection(
-              'حقوق المستخدم',
-              '''• الحق في الوصول إلى بياناتك
-• الحق في تعديل معلوماتك
-• الحق في حذف حسابك
-• الحق في إيقاف الإشعارات
-• الحق في الاعتراض على معالجة البيانات''',
-            ),
-            _buildSection(
-              'ملفات تعريف الارتباط',
-              'نستخدم ملفات تعريف الارتباط لتحسين تجربتك. يمكنك تعطيلها من إعدادات المتصفح.',
-            ),
-            _buildSection(
-              'التغييرات على السياسة',
-              'قد نقوم بتحديث هذه السياسة من وقت لآخر. سيتم إعلامك بأي تغييرات جوهرية.',
-            ),
-            _buildSection(
-              'اتصل بنا',
-              'لأي استفسارات حول سياسة الخصوصية، يرجى التواصل معنا على: privacy@flexyemen.com',
-            ),
+            _buildBulletPoint('البريد الإلكتروني: support@flexyemen.com', context),
+            _buildBulletPoint('واتساب: 777-123-456', context),
+            
             const SizedBox(height: 24),
-            Text(
-              'آخر تحديث: مارس 2026',
-              style: TextStyle(
-                color: AppTheme.getSecondaryTextColor(context),
-                fontSize: 12,
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppTheme.goldColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTheme.goldColor.withOpacity(0.3)),
+              ),
+              child: Text(
+                'آخر تحديث: 1 مارس 2026',
+                style: TextStyle(
+                  fontFamily: 'Changa',
+                  fontSize: 12,
+                  color: AppTheme.getSecondaryTextColor(context),
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           ],
@@ -84,28 +114,76 @@ class PrivacyPolicyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(String title, String content) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontFamily: 'Changa',
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.goldColor,
-          ),
+  Widget _buildHeader(String title, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 8),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontFamily: 'Changa',
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: AppTheme.getTextColor(context),
         ),
-        const SizedBox(height: 8),
-        Text(
-          content,
-          style: const TextStyle(
-            height: 1.6,
-          ),
+      ),
+    );
+  }
+
+  Widget _buildSubHeader(String title, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12, bottom: 6, left: 8),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontFamily: 'Changa',
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: AppTheme.getTextColor(context),
         ),
-        const SizedBox(height: 24),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildParagraph(String text, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontFamily: 'Changa',
+          fontSize: 14,
+          height: 1.5,
+          color: AppTheme.getSecondaryTextColor(context),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBulletPoint(String text, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6, left: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '• ',
+            style: TextStyle(
+              fontSize: 14,
+              color: AppTheme.goldColor,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontFamily: 'Changa',
+                fontSize: 14,
+                color: AppTheme.getSecondaryTextColor(context),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
